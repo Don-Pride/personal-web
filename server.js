@@ -28,6 +28,7 @@ const STATIC_FILES = {
   '/styles.css': 'styles.css',
   '/script.js': 'script.js',
   '/avatar.jpg': 'avatar.jpg',
+  '/resume.pdf': 'resume.pdf',
 };
 
 // 数字分身人设（system prompt）
@@ -165,6 +166,7 @@ function serveStatic(req, res, filePath) {
       '.png': 'image/png',
       '.jpg': 'image/jpeg',
       '.jpeg': 'image/jpeg',
+      '.pdf': 'application/pdf',
       '.ico': 'image/x-icon',
     }[ext] || 'application/octet-stream';
     res.writeHead(200, { 'Content-Type': mime, 'Cache-Control': 'no-cache' });

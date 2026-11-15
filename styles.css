@@ -824,6 +824,23 @@ button {
   word-break: break-all;
 }
 
+.contact-card__link {
+  display: inline-block;
+  align-self: flex-start;
+  color: var(--ink-strong);
+  border-bottom: 1px solid var(--line-mid);
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.contact-card__link:hover {
+  border-bottom-color: var(--ink-strong);
+}
+
+.contact-card__link:focus-visible {
+  outline: 2px solid var(--ink-strong);
+  outline-offset: 3px;
+}
+
 .contact-card__copy {
   align-self: flex-start;
   font-family: var(--font-mono);
@@ -853,6 +870,38 @@ button {
 
 .contact__cta {
   margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.btn--ghost:hover .btn__arrow--down {
+  transform: translateY(2px);
+}
+
+/* ---------- 复制提示 toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  z-index: 100;
+  max-width: calc(100vw - 40px);
+  padding: 13px 22px;
+  background: var(--ink-strong);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--ink-strong);
+  opacity: 0;
+  transform: translate(-50%, 16px);
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 /* ---------- 页脚 ---------- */

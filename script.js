@@ -138,14 +138,32 @@
     }
   }
 
+  // 复制提示 toast
+  const toastEl = document.getElementById('toast');
+  let toastTimer = null;
+  function showToast(message) {
+    if (!toastEl) return;
+    toastEl.textContent = message;
+    toastEl.classList.add('is-visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('is-visible'), 1800);
+  }
+
   document.querySelectorAll('.contact-card__copy').forEach((btn) => {
     const original = btn.textContent;
+    const successMsg = btn.getAttribute('data-success') || '已复制 ✓';
     let timer = null;
     btn.addEventListener('click', async () => {
       const ok = await copyText(btn.getAttribute('data-copy') || '');
-      if (ok) btn.classList.add('is-copied');
-      btn.textContent = ok ? '已复制 ✓' : '复制失败';
       clearTimeout(timer);
+      if (ok) {
+        btn.classList.add('is-copied');
+        btn.textContent = successMsg;
+        showToast(successMsg);
+      } else {
+        btn.textContent = '复制失败';
+        showToast('复制失败，请手动复制');
+      }
       timer = setTimeout(() => {
         btn.classList.remove('is-copied');
         btn.textContent = original;

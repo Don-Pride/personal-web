@@ -211,19 +211,20 @@
       <div class="contact__grid">
         <article class="contact-card">
           <h3 class="contact-card__label">邮箱</h3>
-          <p class="contact-card__value">wx1393492137@163.com</p>
-          <button class="contact-card__copy" type="button" data-copy="wx1393492137@163.com">复制</button>
+          <a class="contact-card__value contact-card__link" href="mailto:wx1393492137@163.com">wx1393492137@163.com</a>
+          <button class="contact-card__copy" type="button" data-copy="wx1393492137@163.com" data-success="邮箱已复制">复制</button>
         </article>
 
         <article class="contact-card">
           <h3 class="contact-card__label">微信</h3>
           <p class="contact-card__value">Aqr_aIwitbf</p>
-          <button class="contact-card__copy" type="button" data-copy="Aqr_aIwitbf">复制</button>
+          <button class="contact-card__copy" type="button" data-copy="Aqr_aIwitbf" data-success="微信号已复制">复制微信号</button>
         </article>
       </div>
 
       <div class="contact__cta">
         <a class="btn btn--primary" href="mailto:wx1393492137@163.com">发邮件给我<span class="btn__arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn--ghost" href="/resume.pdf" download="承佳豪-电商运营实习.pdf">下载简历 PDF<span class="btn__arrow btn__arrow--down" aria-hidden="true">↓</span></a>
       </div>
     </section>
   </main>
@@ -231,6 +232,8 @@
   <footer class="footer">
     <p>© 2026 承佳豪 · 数字分身原型</p>
   </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="script.js"></script>
 </body>
