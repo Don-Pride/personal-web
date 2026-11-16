@@ -108,46 +108,55 @@ export async function onRequestPost(context) {
     return json(400, { error: '没有可用的消息内容' });
   }
 
-  const baseUrl = (env && env.DEEPSEEK_BASE_URL) || 'https://api.deepseek.com';
-  const model = (env && env.DEEPSEEK_MODEL) || 'deepseek-chat';
+  // 1. 从环境变量读取 Dify 的配置
+  const difyBaseUrl = (env && env.DIFY_API_URL) || 'https://api.dify.ai/v1';
+  const difyApiKey = env && env.DIFY_API_KEY;
 
+  // 2. 检查 Key 是否存在
+  if (!difyApiKey) {
+    return json(500, { error: "服务端未配置 DIFY_API_KEY，请在 EdgeOne 环境变量中设置" });
+  }
+
+  // 3. 构建发给 Dify 的请求体
+  const difyPayload = {
+    inputs: {}, 
+    // 取用户最后一条消息作为提问
+    query: body.messages[body.messages.length - 1].content, 
+    response_mode: "blocking", 
+    conversation_id: "", 
+    user: "web-visitor" 
+  };
+
+  // 4. 设置超时控制器（防止请求卡死）
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 30000);
 
   try {
-    const upstream = await fetch(baseUrl + '/chat/completions', {
+    // 5. 向 Dify 发起请求
+    const upstream = await fetch(`${difyBaseUrl}/chat-messages`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
+        'Authorization': `Bearer ${difyApiKey}`
       },
-      body: JSON.stringify({
-        model,
-        messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...cleaned],
-        temperature: 0.7,
-        max_tokens: 800,
-        stream: false,
-      }),
-      signal: controller.signal,
+      body: JSON.stringify(difyPayload),
+      signal: controller.signal
     });
 
-    const data = await upstream.json().catch(() => ({}));
-
+    // 6. 解析 Dify 的返回结果
+    const difyData = await upstream.json().catch(() => ({}));
+    
     if (!upstream.ok) {
-      const message =
-        (data && data.error && data.error.message) || 'DeepSeek 返回错误：' + upstream.status;
+      const message = (difyData && difyData.message) || `Dify 返回错误: ${upstream.status}`;
       return json(502, { error: message });
     }
 
-    const reply =
-      data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    if (!reply) {
-      return json(502, { error: 'DeepSeek 返回内容为空' });
-    }
+    // 7. 提取回答并返回给前端
+    const reply = difyData.answer || "抱歉，没有获取到有效回复。";
     return json(200, { reply });
+
   } catch (err) {
-    const message =
-      err && err.name === 'AbortError' ? '请求超时' : (err && err.message) || '请求 DeepSeek 失败';
+    const message = err && err.name === 'AbortError' ? '请求超时' : (err && err.message) || '请求 Dify 失败';
     return json(502, { error: message });
   } finally {
     clearTimeout(timer);
