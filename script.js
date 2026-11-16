@@ -49,11 +49,16 @@
     bubble.textContent = text;
   }
 
-  function appendError(message) {
+  function appendFallback() {
     const bubble = createMsgEl('bot');
-    bubble.textContent = '⚠ ' + message;
-    bubble.style.borderColor = '#0a0a0a';
-    bubble.style.color = '#0a0a0a';
+    bubble.classList.add('msg__bubble--fallback');
+    bubble.appendChild(document.createTextNode('这个问题超出我的知识范围。为避免误导，建议直接邮件联系我 '));
+    const link = document.createElement('a');
+    link.className = 'msg__link';
+    link.href = 'mailto:wx1393492137@163.com';
+    link.textContent = 'wx1393492137@163.com';
+    bubble.appendChild(link);
+    bubble.appendChild(document.createTextNode('。'));
   }
 
   async function sendQuestion(text) {
@@ -83,8 +88,8 @@
       loadingBubble.parentElement.remove();
 
       if (!res.ok) {
-        const errMsg = (data && data.error) || '请求失败，请稍后再试';
-        appendError(errMsg);
+        console.warn('[chat] 请求失败：', (data && data.error) || res.status);
+        appendFallback();
       } else {
         const reply = (data && data.reply) || '';
         history.push({ role: 'assistant', content: reply });
@@ -92,7 +97,8 @@
       }
     } catch (err) {
       loadingBubble.parentElement.remove();
-      appendError('网络异常，请确认服务已启动（node server.js）');
+      console.warn('[chat] 网络异常：', err);
+      appendFallback();
     } finally {
       setLoading(false);
       inputEl.focus();
@@ -104,13 +110,13 @@
     sendQuestion(inputEl.value);
   });
 
-  // 兴趣标签：点击后向数字分身发送对应问题
+  // 兴趣条目：点击后向数字分身发送对应问题
   const chatSection = document.getElementById('chat');
-  const tags = document.querySelectorAll('.tag');
-  tags.forEach((tag) => {
-    tag.addEventListener('click', () => {
+  const triggers = document.querySelectorAll('[data-question]');
+  triggers.forEach((el) => {
+    el.addEventListener('click', () => {
       chatSection.scrollIntoView({ behavior: 'smooth' });
-      sendQuestion(tag.dataset.question);
+      sendQuestion(el.dataset.question);
     });
   });
 

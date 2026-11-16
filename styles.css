@@ -414,26 +414,76 @@ button {
   background: var(--ink-strong);
 }
 
-/* 兴趣标签 */
-.tags {
+/* 兴趣条目 */
+.interest-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
 }
 
-.tag {
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink-strong);
-  border: 1px solid var(--ink-strong);
+.interest-list li {
+  border-top: 1px solid var(--line);
+}
+
+.interest-list li:first-child {
+  border-top: none;
+}
+
+.interest {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 15px 0;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
 }
 
-.tag:hover {
+.interest-list li:first-child .interest {
+  padding-top: 0;
+}
+
+.interest-list li:last-child .interest {
+  padding-bottom: 0;
+}
+
+.interest__name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink-strong);
+}
+
+.interest__name::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
   background: var(--ink-strong);
-  color: #fff;
+  transition: transform 0.18s ease;
+}
+
+.interest__desc {
+  display: block;
+  margin-top: 7px;
+  padding-left: 19px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  transition: color 0.18s ease;
+}
+
+.interest:hover .interest__name::before {
+  transform: scale(1.3);
+}
+
+.interest:hover .interest__desc {
+  color: var(--ink);
+}
+
+.interest:focus-visible {
+  outline: 2px solid var(--ink-strong);
+  outline-offset: 3px;
 }
 
 /* 记忆点强调卡片 —— 几何黑色色块 */
@@ -638,9 +688,28 @@ button {
 
 .chat__hint {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
+  line-height: 1.7;
   color: var(--ink-faint);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
+}
+
+.chat__hint + .chat__hint {
+  margin-top: -10px;
+}
+
+.chat__hint-link {
+  color: var(--ink-strong);
+  border-bottom: 1px solid var(--line-mid);
+  transition: border-color 0.18s ease;
+}
+
+.chat__hint-link:hover {
+  border-bottom-color: var(--ink-strong);
+}
+
+.chat__hint--warn {
+  color: var(--ink-soft);
 }
 
 /* ---------- 作品展示区 ---------- */
@@ -916,6 +985,83 @@ button {
   letter-spacing: 0.06em;
 }
 
+/* ---------- 聊天知识范围面板 ---------- */
+.chat__scope {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 32px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+  background: var(--bg-white);
+  border: 1px solid var(--line);
+}
+
+.chat__scope-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+
+.chat__scope-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.chat__scope-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.chat__scope-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  background: var(--ink-strong);
+}
+
+.chat__scope-col--deny .chat__scope-list li::before {
+  background: transparent;
+  border: 1px solid var(--ink-strong);
+}
+
+.chat__scope-note {
+  grid-column: 1 / -1;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: var(--ink-faint);
+}
+
+/* 兜底气泡与可点击邮箱 */
+.msg__bubble--fallback {
+  border-color: var(--ink-strong);
+}
+
+.msg__link {
+  color: var(--ink-strong);
+  font-weight: 700;
+  border-bottom: 1px solid var(--ink-strong);
+  word-break: break-all;
+  transition: opacity 0.18s ease;
+}
+
+.msg__link:hover {
+  opacity: 0.6;
+}
+
 /* ---------- 响应式 ---------- */
 @media (max-width: 760px) {
   .hero {
@@ -1002,6 +1148,10 @@ button {
   }
 
   .contact__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chat__scope {
     grid-template-columns: 1fr;
   }
 }
