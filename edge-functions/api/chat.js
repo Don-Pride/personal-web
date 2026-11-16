@@ -151,9 +151,21 @@ export async function onRequestPost(context) {
       return json(502, { error: message });
     }
 
-    // 7. 提取回答并返回给前端
-    const reply = difyData.answer || "抱歉，没有获取到有效回复。";
-    return json(200, { reply });
+  // 7. 提取回答并清洗思考标签
+  let reply = difyData.answer || "抱歉，没有获取到有效回复。";
+  
+  // 过滤掉 <think>...</think> 以及中间的思考内容（支持跨行匹配）
+  reply = reply.replace(/<think[\s\S]*?<\/think>/gi, '').trim();
+  
+  // 如果思考过程被截断、缺失了开标签，过滤掉残留的结束标签
+  reply = reply.replace(/<\/think>/gi, '').trim();
+  
+  // 兜底处理：万一模型只输出了思考过程，导致清洗后为空
+  if (!reply) {
+    reply = "抱歉，没有获取到有效回答，请稍后再试。";
+  }
+
+  return json(200, { reply });
 
   } catch (err) {
     const message = err && err.name === 'AbortError' ? '请求超时' : (err && err.message) || '请求 Dify 失败';
