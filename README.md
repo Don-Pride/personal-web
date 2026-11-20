@@ -31,7 +31,7 @@
 
 ## 说明
 - API Key 只保存在服务端（`.env` 或环境变量），不会暴露到浏览器。
-- 数字分身的人设（system prompt）在 `server.js` 顶部的 `SYSTEM_PROMPT` 中，可按需修改。
+- 数字分身的人设（system prompt）唯一来源是 `rag/system.md`：本地 `server.js` 启动时直接读取；线上由 Dify 平台配置，修改后需重新上传到 Dify 知识库。
 - 头像当前为「承」字占位，后续可替换为真人照片：修改 `index.html` 中 `.avatar` 区块即可。
 - DeepSeek 接口地址与模型名集中在 `server.js` 顶部常量，便于更换。
 
@@ -41,7 +41,9 @@ personal/
 ├── index.html      # 页面结构
 ├── styles.css      # 瑞士网格黑白主题样式
 ├── script.js       # 聊天交互
-├── server.js       # 静态服务 + DeepSeek 代理
+├── server.js       # 本地：静态服务 + DeepSeek 代理
+├── edge-functions/api/chat.js  # 线上：EdgeOne Pages 云函数，转发到 Dify
+├── rag/system.md   # 数字分身人设（唯一来源，本地与 Dify 共用）
 ├── .env.example    # 配置示例
 └── README.md
 ```
